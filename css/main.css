@@ -934,3 +934,407 @@ body:hover .cursor-follower { opacity: 1; }
   .form-grid-3 { grid-template-columns: 1fr; }
   .page-main { padding: 2rem 1rem; }
 }
+
+/* ═══════════════════════════════════════════════════
+   REDISEÑO VISUAL — Obras Públicas
+   Hero Cards + Glass + Cable Effect + Scroll Reveal
+   ═══════════════════════════════════════════════════ */
+
+/* ── 1. CABLE / LUZ ANIMADA BACKGROUND ── */
+.hero-cable-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-cable-bg canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.85;
+}
+
+/* ── 2. HERO LAYOUT ADJUSTMENTS ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 760px;
+  padding-bottom: 80px;
+}
+
+/* ── 3. FLOATING GLASS CARDS CLUSTER ── */
+.hero-cards-cluster {
+  position: absolute;
+  right: -2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46%;
+  height: 540px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Glass card base */
+.hc-card {
+  position: absolute;
+  border-radius: 20px;
+  padding: 10px;
+  cursor: default;
+  transition: transform 0.5s cubic-bezier(0.2, 1, 0.2, 1), z-index 0s;
+  will-change: transform;
+
+  /* glassmorphism from generated-page */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 30px 60px -15px rgba(0, 0, 0, 0.75),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.25);
+
+  /* Iridescent gradient border */
+  --grad-border: linear-gradient(225deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.18) 45%,
+    rgba(59,130,246,0.3) 60%,
+    rgba(255,255,255,0) 100%);
+}
+
+/* Iridescent border overlay */
+.hc-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: var(--grad-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glass shine highlight (from figselec) */
+.hc-card__shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.13) 0%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.04) 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hc-card__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(6, 14, 28, 0.7);
+}
+
+.hc-card__img {
+  width: 100%;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  line-height: 0;
+}
+.hc-card__img svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hc-card__label {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hc-card__tag {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.8;
+}
+.hc-card__title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(220, 235, 255, 0.9);
+  letter-spacing: 0.01em;
+}
+
+/* Individual card positions & sizes */
+.hc-card--1 {
+  width: 52%;
+  top: 2%;
+  left: 2%;
+  transform: rotate(var(--card-rot, -5deg));
+  animation: hc-float-1 8s ease-in-out infinite;
+}
+.hc-card--2 {
+  width: 58%;
+  top: 10%;
+  right: 0%;
+  transform: rotate(var(--card-rot, 3deg));
+  animation: hc-float-2 9s ease-in-out infinite 1s;
+}
+.hc-card--3 {
+  width: 56%;
+  bottom: 18%;
+  left: 0%;
+  transform: rotate(var(--card-rot, -2deg));
+  animation: hc-float-3 7s ease-in-out infinite 2s;
+}
+.hc-card--4 {
+  width: 50%;
+  bottom: 4%;
+  right: 2%;
+  transform: rotate(var(--card-rot, 6deg));
+  animation: hc-float-4 10s ease-in-out infinite 0.5s;
+}
+
+@keyframes hc-float-1 {
+  0%, 100% { transform: rotate(-5deg) translate(0, 0); }
+  50% { transform: rotate(-4deg) translate(-6px, -10px); }
+}
+@keyframes hc-float-2 {
+  0%, 100% { transform: rotate(3deg) translate(0, 0); }
+  50% { transform: rotate(4deg) translate(5px, -8px); }
+}
+@keyframes hc-float-3 {
+  0%, 100% { transform: rotate(-2deg) translate(0, 0); }
+  50% { transform: rotate(-3deg) translate(-4px, 8px); }
+}
+@keyframes hc-float-4 {
+  0%, 100% { transform: rotate(6deg) translate(0, 0); }
+  50% { transform: rotate(5deg) translate(6px, 6px); }
+}
+
+/* ── 4. GRADIENT BLUR DISSOLVE (from generated-page.html) ── */
+.hero-gradient-blur {
+  position: absolute;
+  z-index: 4;
+  inset: auto 0 0 0;
+  height: 38%;
+  pointer-events: none;
+}
+.hero-gradient-blur > div { position: absolute; inset: 0; }
+.hero-gradient-blur::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  backdrop-filter: blur(0.5px);
+  mask: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 12.5%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 37.5%);
+}
+.hero-gradient-blur > div:nth-of-type(1) { z-index:2; backdrop-filter:blur(1px);  mask:linear-gradient(to bottom,rgba(0,0,0,0) 12.5%,rgba(0,0,0,1) 25%,rgba(0,0,0,1) 37.5%,rgba(0,0,0,0) 50%); }
+.hero-gradient-blur > div:nth-of-type(2) { z-index:3; backdrop-filter:blur(2px);  mask:linear-gradient(to bottom,rgba(0,0,0,0) 25%,rgba(0,0,0,1) 37.5%,rgba(0,0,0,1) 50%,rgba(0,0,0,0) 62.5%); }
+.hero-gradient-blur > div:nth-of-type(3) { z-index:4; backdrop-filter:blur(4px);  mask:linear-gradient(to bottom,rgba(0,0,0,0) 37.5%,rgba(0,0,0,1) 50%,rgba(0,0,0,1) 62.5%,rgba(0,0,0,0) 75%); }
+.hero-gradient-blur > div:nth-of-type(4) { z-index:5; backdrop-filter:blur(8px);  mask:linear-gradient(to bottom,rgba(0,0,0,0) 50%,rgba(0,0,0,1) 62.5%,rgba(0,0,0,1) 75%,rgba(0,0,0,0) 87.5%); }
+.hero-gradient-blur > div:nth-of-type(5) { z-index:6; backdrop-filter:blur(16px); mask:linear-gradient(to bottom,rgba(0,0,0,0) 62.5%,rgba(0,0,0,1) 75%,rgba(0,0,0,1) 87.5%,rgba(0,0,0,0) 100%); }
+.hero-gradient-blur > div:nth-of-type(6) { z-index:7; backdrop-filter:blur(32px); mask:linear-gradient(to bottom,rgba(0,0,0,0) 75%,rgba(0,0,0,1) 87.5%,rgba(0,0,0,1) 100%); }
+.hero-gradient-blur::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  backdrop-filter: blur(64px);
+  mask: linear-gradient(to bottom, rgba(0,0,0,0) 87.5%, rgba(0,0,0,1) 100%);
+}
+
+/* ── 5. ROLE CARDS — GLASSMORPHISM UPGRADE ── */
+.role-card {
+  background: rgba(8, 16, 32, 0.55) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+  border-radius: 20px !important;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1),
+              box-shadow 0.4s ease,
+              border-color 0.4s ease !important;
+}
+
+/* Iridescent border on hover */
+.role-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(225deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.15) 40%,
+    rgba(59,130,246,0.25) 60%,
+    rgba(255,255,255,0) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.role-card:hover::after { opacity: 1; }
+
+.role-card:hover {
+  transform: translateY(-8px) scale(1.015) !important;
+  box-shadow:
+    0 40px 80px -20px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(59,130,246,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+
+/* Director accent hover */
+.role-card[data-role="Director"]:hover {
+  box-shadow:
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 0 30px -5px rgba(59,130,246,0.25),
+    0 0 0 1px rgba(59,130,246,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+.role-card[data-role="Supervisor"]:hover {
+  box-shadow:
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 0 30px -5px rgba(16,185,129,0.22),
+    0 0 0 1px rgba(16,185,129,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+.role-card[data-role="Proyectista"]:hover {
+  box-shadow:
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 0 30px -5px rgba(245,158,11,0.2),
+    0 0 0 1px rgba(245,158,11,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+.role-card[data-role="Secretario"]:hover {
+  box-shadow:
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 0 30px -5px rgba(139,92,246,0.2),
+    0 0 0 1px rgba(139,92,246,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+
+/* Glass shimmer scan on hover */
+.role-card-bg {
+  transition: opacity 0.5s ease !important;
+}
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 40%;
+  height: 220%;
+  background: linear-gradient(105deg,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(255,255,255,0) 60%);
+  transform: rotate(25deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.role-card:hover::before {
+  left: 120%;
+}
+
+/* ── 6. SCROLL REVEAL (from generated-page.html) ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(38px);
+  filter: blur(8px);
+  transition:
+    opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 1s cubic-bezier(0.2, 0.65, 0.2, 1),
+    filter 0.8s ease;
+  will-change: opacity, transform, filter;
+}
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+.scroll-reveal.is-exiting {
+  filter: blur(5px);
+  transition: filter 0.5s ease;
+}
+
+/* Stagger delays for role cards */
+.roles-grid .role-card:nth-child(1) { transition-delay: 0s; }
+.roles-grid .role-card:nth-child(2) { transition-delay: 0.1s; }
+.roles-grid .role-card:nth-child(3) { transition-delay: 0.2s; }
+.roles-grid .role-card:nth-child(4) { transition-delay: 0.3s; }
+
+/* ── 7. SECTION HEADER REVEAL UPGRADE ── */
+.section-header .section-label,
+.section-header .section-title,
+.section-header .section-desc {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s cubic-bezier(0.2, 0.65, 0.2, 1),
+    filter 0.8s ease;
+}
+.section-header.is-visible .section-label { opacity:1; transform:none; filter:none; transition-delay:0s; }
+.section-header.is-visible .section-title { opacity:1; transform:none; filter:none; transition-delay:0.1s; }
+.section-header.is-visible .section-desc  { opacity:1; transform:none; filter:none; transition-delay:0.22s; }
+
+/* ── 8. ARCH STRIP — enhanced ── */
+.arch-strip {
+  position: relative;
+  overflow: hidden;
+}
+.arch-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(59,130,246,0.06) 0%, transparent 30%),
+    linear-gradient(270deg, rgba(59,130,246,0.06) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+/* ── 9. RESPONSIVE ADJUSTMENTS ── */
+@media (max-width: 1100px) {
+  .hero-cards-cluster {
+    width: 42%;
+    right: -4%;
+  }
+}
+@media (max-width: 900px) {
+  .hero-cards-cluster {
+    display: none;
+  }
+  .hero-content {
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hc-card, .scroll-reveal, .section-header * { animation: none !important; transition: none !important; }
+}
