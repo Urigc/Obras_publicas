@@ -59,28 +59,28 @@ const observer = new IntersectionObserver(entries => {
 countEls.forEach(el => observer.observe(el));
 
 const roleConfig = {
-  director: {
+  Director: {
     icon: '🏛️',
     tag: 'Nivel Directivo',
     name: 'Director de Obras',
     color: '#3b82f6',
     redirect: 'director/director.html'
   },
-  supervisor: {
+  Supervisor: {
     icon: '📋',
     tag: 'Nivel Operativo',
     name: 'Supervisor de Obra',
     color: '#10b981',
     redirect: 'supervisor/supervisor.html'
   },
-  proyectista: {
+  Proyectista: {
     icon: '📐',
     tag: 'Nivel Técnico',
     name: 'Proyectista',
     color: '#f59e0b',
     redirect: 'proyectista/proyectista.html'
   },
-  secretaria: {
+  Secretario: {
     icon: '📄',
     tag: 'Nivel Administrativo',
     name: 'Secretaría',
@@ -128,6 +128,8 @@ function togglePass() {
 
 
 async function handleLogin() {
+  if (document.getElementById('login-submit').classList.contains('loading')) return;
+  
   const user = document.getElementById('modal-login-user').value.trim();
   const pass = document.getElementById('modal-login-pass').value;
   const errEl = document.getElementById('login-error');
@@ -142,29 +144,22 @@ async function handleLogin() {
   btn.classList.add('loading');
   errEl.textContent = '';
 
-  await delay(900);
+  try {
+    const response = await loginUser(user, pass, currentRole);
 
-  const mockUsers = {
-    director: [{ user: 'dir_obras', pass: 'admin123', id: 'D001', nombre: 'Ing. Director' }],
-    supervisor: [{ user: 'sup_001', pass: 'super123', id: 'S001', nombre: 'Uriel González' }],
-    proyectista: [{ user: 'pro_001', pass: 'proy123', id: 'P001', nombre: 'Arq. Proyectista' }],
-    secretaria: [{ user: 'sec_001', pass: 'sec123', id: 'SEC001', nombre: 'Secretaría Admin' }]
-  };
+    btn.classList.remove('loading');
 
-  const validUser = (mockUsers[currentRole] || []).find(u => u.user === user && u.pass === pass);
-
-  btn.classList.remove('loading');
-
-  if (validUser) {
-    sessionStorage.setItem('op_user', JSON.stringify({
-  role: currentRole,
-  id: validUser.id,
-  nombre: validUser.nombre,
-  username: validUser.user
-}));
-window.location.href = roleConfig[currentRole].redirect;
-  } else {
-    errEl.textContent = 'Usuario o contraseña incorrectos.';
+    if (response.success && response.data) {
+      showToast(`Bienvenido, ${response.data.nombre}`);
+      
+      setTimeout(() => {
+        window.location.href = roleConfig[currentRole].redirect;
+      }, 800);
+    } 
+  } catch (err) {
+    btn.classList.remove('loading');
+    
+    errEl.textContent = err.message || 'Error de conexión con el servidor.';
     shake(btn);
   }
 }
@@ -200,4 +195,29 @@ function showToast(message) {
   toast.querySelector('.toast-msg').textContent = message;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+async function loginUser(username, password, role) {
+  
+  const response = await fetch('https://obraspublicas-backend-production.up.railway.app/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, role })
+  });
+  
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.message || 'Error de acceso');
+
+  sessionStorage.setItem('op_user', JSON.stringify({
+    id: result.data.id,
+    role: role,
+    nombre: result.data.nombre,
+    username: result.data.username
+  }));
+
+  localStorage.setItem('user_id', result.data.id);
+  localStorage.setItem('user_role', role);
+  localStorage.setItem('user_name', result.data.nombre);
+  
+  return result;
 }
