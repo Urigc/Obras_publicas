@@ -1,16 +1,3 @@
-"""
-backend/routes/propuestas.py
-========================================================================
-SISTEMA DE PRESUPUESTO PARTICIPATIVO - Temascaltepec
-
-Endpoints publicos y autenticados para que los pobladores puedan
-proponer obras, ver tendencias y emitir votos cuatrimestrales.
-
-El RLS en Supabase ya restringe estas tablas a SELECT/INSERT, asi que
-toda mutacion aqui se hace mediante INSERT explicitos.
-========================================================================
-"""
-
 from datetime import date
 from functools import wraps
 
